@@ -34,8 +34,8 @@ def clear():
 def addRecord():
     ID=roll.get()
     NAME=name.get()
-    fr.TakeImage(ID,NAME)
-    notification.configure(text='Collecting Samples complete!')
+    message=fr.TakeImage(ID,NAME)
+    notification.configure(text=message)
     return
 
 def trainRecord():

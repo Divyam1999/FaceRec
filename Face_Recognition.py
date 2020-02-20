@@ -26,24 +26,28 @@ def TakeImage(ID,NAME):
     Id = ID
     name = NAME
     if (Id != None and name!= None):
-        cap = cv2.VideoCapture(0)
         count =0
+        cap = cv2.VideoCapture(0)
         while True:
             ret, frame = cap.read()
+            if not ret:
+                continue
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces = face_classifier.detectMultiScale(gray, 1.3, 5)
             for (x,y,w,h) in faces:
                 cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
                 count+=1
+                cv2.putText(frame,str(count),(x,y+h),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
                 file_name_path='TrainingImages/'+name+'.'+Id+'.'+str(count)+'.jpg'
                 cv2.imwrite(file_name_path,gray[y:y+h,x:x+w])
                 cv2.imshow('Capturing Your Image',frame)
-                cv2.putText(frame,str(count),(x,y+h),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
                 if cv2.waitKey(1)==13 or count==100:
                     cap.release()
                     cv2.destroyAllWindows()
-                    print('Collecting Samples Complete!')
-                    break
+                    return 'Collecting Images Complete! Please train the record'
+
+
+
 
 def TrainImage():
     recognizer = cv2.face_LBPHFaceRecognizer.create()
@@ -83,7 +87,7 @@ def TrackImage():
                 cv2.imwrite("ImagesUnknown\Image"+str(noOfFile) + ".jpg", im[y:y+h,x:x+w])            
             cv2.putText(im,str(tt),(x,y+h), font, 1,(255,255,255),2)        
         attendance=attendance.drop_duplicates(subset=['Id'],keep='first')    
-        cv2.imshow('im',im) 
+        cv2.imshow('Taking Your Attendance',im) 
         if (cv2.waitKey(1)==13):
             break
     ts = time.time()      
