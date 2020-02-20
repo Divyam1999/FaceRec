@@ -9,6 +9,7 @@ import time
 
 face_classifier = cv2.CascadeClassifier('HaarCascade\haarcascade_frontalface_default.xml')
 
+
 def image_and_lables_extractor(path):
     imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
     faces,Ids = [],[]
@@ -21,9 +22,9 @@ def image_and_lables_extractor(path):
     return faces,Ids
 
 
-def TakeImage():
-    Id = input('Enter your Id: ')
-    name = input('Enter your name: ')
+def TakeImage(ID,NAME):
+    Id = ID
+    name = NAME
     if (Id != None and name!= None):
         cap = cv2.VideoCapture(0)
         count =0
@@ -50,6 +51,7 @@ def TrainImage():
     recognizer.train(faces,np.array(Id))
     recognizer.save('TrainingData.yml')
     print('Images Trained Sucessfully!')
+    
 
 def TrackImage():
     recognizer = cv2.face.LBPHFaceRecognizer_create()#cv2.createLBPHFaceRecognizer()
@@ -92,9 +94,3 @@ def TrackImage():
     attendance.to_csv(fileName,index=False)
     cam.release()
     cv2.destroyAllWindows()
-
-
-
-TakeImage()
-TrainImage()
-TrackImage()
