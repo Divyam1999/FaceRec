@@ -189,6 +189,9 @@ def DailyReport():
     for i in LateFrame.index:
         string = LateFrame['delay'][i]
         LateFrame['delay'][i] = string[7:15]
+    return presentFrame,AbsentFrame,LateFrame
+
+def ImportExcel(presentFrame,AbsentFrame,LateFrame):
     filename = "Reports/Daily_Report.xlsx"
     writer=pd.ExcelWriter(filename,engine='xlsxwriter')
     presentFrame.to_excel(writer,sheet_name='present',index=False)

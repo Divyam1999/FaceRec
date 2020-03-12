@@ -121,8 +121,34 @@ def about():
     about_window.mainloop()
 
 def dailyReport():
-    fr.DailyReport()
-    messagebox.showinfo('Notification','Report file got created!')
+    messagebox.showinfo('Notification',"Please wait while report gets generated")
+    rw = tk.Toplevel()
+    rw.geometry('900x500')
+    rw.resizable(0,0)
+    rw.title('Daily Report')
+    rw.iconbitmap('GuiFiles/icon.ico')
+    tk.Label(rw,text='DAILY REPORT',font=('Arial Bold',20),bg='#ffffb3').place(x=80,y=10)
+    rw.configure(background='#b3ccff')
+    pf = tk.LabelFrame(rw,text='Present Today',font=('Arial Bold',18),bg='#ffffb3')
+    pf.grid(row=0,column=0,padx=40,pady=80,columnspan=3)
+    af = tk.LabelFrame(rw,text='Absent Today',font=('Arial Bold',18),bg='#ffffb3')
+    af.grid(row=0,column=4,padx=40,pady=80,columnspan=3)
+    lf = tk.LabelFrame(rw,text='Late Today',font=('Arial Bold',18),bg='#ffffb3')
+    lf.grid(row=0,column=8,padx=40,pady=80,columnspan=3)
+    p,a,l=fr.DailyReport()
+    col = ['userid','name']
+    col_l= ['userid','name','delay']
+    for i in col:
+        for j in p.index:
+            tk.Label(pf,text=p[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j,column=col.index(i))
+        for j in a.index:
+            tk.Label(af,text=a[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j,column=col.index(i))
+    for i in col_l:
+        for j in l.index:
+            tk.Label(lf,text=l[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j,column=col_l.index(i))
+    tk.Button(rw,text='Import Excel',command=lambda:fr.ImportExcel(p,a,l),font=('Lucia',16),bg='green',fg='white').grid(row=200,column=2)
+    tk.Button(rw,text='Close',command=lambda:rw.destroy(),font=('Lucia',16),bg='red',fg='white').grid(row=200,column=8)
+    rw.mainloop()
 
 #Search_Frame
 tk.Label(search_frame,text='ID: ',font=('Lucia',16),bg='#b3ccff').grid(row=0,column=0)
