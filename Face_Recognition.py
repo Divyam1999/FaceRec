@@ -12,6 +12,13 @@ import sqlalchemy
 connection = sqlalchemy.create_engine('mysql+pymysql://root:open5920@localhost/facerecdb')
 face_classifier = cv2.CascadeClassifier('HaarCascade/haarcascade_frontalface_default.xml')
 
+def UserExists(ID):
+    result = pd.read_sql('SELECT userid from details',con=connection)
+    for i in result.index:
+        if (result['userid'][i]==ID):
+            return True
+    return False
+
 def image_and_lables_extractor(path):
     imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
     faces,Ids = [],[]
@@ -25,7 +32,7 @@ def image_and_lables_extractor(path):
 
 
 def TakeImage(ID,NAME,DEPARTMENT,GENDER,ARRIVAL,EMAIL):
-    if (ID != None and NAME!= None) or (ID!='' and NAME != ''):
+    if not UserExists(ID):
         count =0
         cap = cv2.VideoCapture(0)
         while True:
@@ -46,11 +53,11 @@ def TakeImage(ID,NAME,DEPARTMENT,GENDER,ARRIVAL,EMAIL):
                     cv2.destroyAllWindows()
                     cols = ['userid','name','department','gender','stoa','email']
                     df = pd.DataFrame(columns=cols)
-                    df.loc[len(df)]=[int(ID),NAME,DEPARTMENT,GENDER,ARRIVAL,EMAIL]
+                    df.loc[len(df)]=[ID,NAME,DEPARTMENT,GENDER,ARRIVAL,EMAIL]
                     df.to_sql(con=connection,name='details',if_exists='append',index=False)
                     return 'Image samples collected and record added!' 
     else:
-        return 'Please enter your credentials'
+        return 'User already exists! please enter an unique id'
 
 
 def TrainImage():
@@ -113,10 +120,6 @@ def getName(ID,text=None):
         return result['name'][0]
     else:
         return result
-
-def searchUser(name):
-    query = "SELECT * from details WHERE name='"+name+"';"
-    result = pd.read_sql(query,con=connection)
 
 def InsertShifts():
     df = pd.read_sql("SELECT * FROM fake_attendance;",con=connection) # reading the attendance

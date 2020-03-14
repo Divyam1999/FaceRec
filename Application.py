@@ -51,7 +51,7 @@ def clear():
 def search():
     uid = userid.get()
     name = nm.get()
-    if (name == '' or name==None) and (uid == None or uid==''):
+    if name == '' and uid=='':
         messagebox.showerror('Error','Please enter Id or name to search')
     else:
         sw = tk.Toplevel()
@@ -60,8 +60,13 @@ def search():
         sw.resizable(0,0)
         sw.iconbitmap('GuiFiles/icon.ico')
         sw.configure(background='#d9ffb3')
+        hf = tk.Frame(sw,height=100,width=800,bg='#b3ccff')
+        hf.place(x=0,y=0)
+        logo=ImageTk.PhotoImage(Image.open('GuiFiles/search.png'))
+        tk.Label(hf,image=logo,bg='#b3ccff',height=60,width=60).place(x=30,y=10)
+        tk.Label(hf,text='SEARCH RECORDS',font=('Arial Bold',18),bg='#b3ccff').place(x=100,y=10)
         sf = tk.LabelFrame(sw,height=200,width=800,bg='#ffffb3')
-        sf.place(x=20,y=80)
+        sf.place(x=20,y=140)
         cols = ['userid','name','department','stoa','gender','email']
         for item in cols:
             tk.Label(sf,text=item.capitalize(),font=('Arial Bold',16),bg='#ffffb3').grid(row=0,column=cols.index(item),padx=10,pady=10)
@@ -81,8 +86,8 @@ def search():
                 for i in cols:
                     for j in range(len(result)):
                         tk.Label(sf,text=result[i][j],font=('Lucia',12),bg='#ffffb3').grid(row=j+1,column=cols.index(i))
-    tk.Button(sw,text='Close',command=lambda:sw.destroy(),fg='white',bg='red',font=('Lucia',16)).pack(padx=80,pady=60,side=tk.RIGHT)
-    sw.mainloop()
+        tk.Button(sw,text='Close',command=lambda:sw.destroy(),fg='white',bg='red',font=('Lucia',16)).place(x=700,y=400)
+        sw.mainloop()
 
 def train():
     msg = fr.TrainImage()
@@ -102,8 +107,11 @@ def addrecord():
     GENDER = gender.get()
     ARRIVAL = ''+str(HH)+':'+str(MM)+':'+str(SS)
     DEPARTMENT = department.get()
-    msg = fr.TakeImage(ID,NAME,DEPARTMENT,GENDER,ARRIVAL,EMAIL)
-    messagebox.showinfo('Notification',msg)
+    if ID =='' or NAME=='' or EMAIL=='' or ARRIVAL=='::' or GENDER=='':
+        messagebox.showerror('Error','Please fill in all the details')
+    else:
+        msg = fr.TakeImage(int(ID),NAME,DEPARTMENT,GENDER,ARRIVAL,EMAIL)
+        messagebox.showinfo('Notification',msg)
 
 def about():
     myfile = open('README.md','r')
@@ -115,7 +123,11 @@ def about():
     about_window.geometry("500x400")
     about_window.iconbitmap('GuiFiles/icon.ico')
     about_window.resizable(0,0)
-    tk.Label(about_window,text='About FaceRec Attendance System',font=('Arial Bold',16),bg='#b3ccff').place(x=10,y=40)
+    hf=tk.Frame(about_window,height=80,width=500,bg='#d9ffb3')
+    hf.place(x=0,y=0)
+    logo=ImageTk.PhotoImage(Image.open('GuiFiles/search.png'))
+    tk.Label(hf,image=logo,bg='#d9ffb3',height=60,width=60).place(x=30,y=10)
+    tk.Label(hf,text='About FaceRec Attendance System',font=('Arial Bold',16),bg='#d9ffb3').place(x=90,y=40)
     tk.Message(about_window,text=aboutText,font=('Lucia',9),bg='#b3ccff').place(x=10,y=80)
     tk.Button(about_window,text='Close',command=lambda:about_window.destroy(),bg='red',fg='white',font=('Lucia',14)).place(x=400,y=330)
     about_window.mainloop()
@@ -127,25 +139,32 @@ def dailyReport():
     rw.resizable(0,0)
     rw.title('Daily Report')
     rw.iconbitmap('GuiFiles/icon.ico')
-    tk.Label(rw,text='DAILY REPORT',font=('Arial Bold',20),bg='#ffffb3').place(x=80,y=10)
-    rw.configure(background='#b3ccff')
+    hf = tk.Frame(rw,height=100,width=900,bg='#b3ccff')
+    hf.place(x=0,y=0)
+    logo=ImageTk.PhotoImage(Image.open('GuiFiles/search.png'))
+    tk.Label(hf,image=logo,bg='#b3ccff',height=60,width=60).place(x=30,y=10)
+    tk.Label(hf,text='DAILY REPORT',font=('Arial Bold',20),bg='#b3ccff').place(x=100,y=10)
+    rw.configure(background='#d9ffb3')
     pf = tk.LabelFrame(rw,text='Present Today',font=('Arial Bold',18),bg='#ffffb3')
-    pf.grid(row=0,column=0,padx=40,pady=80,columnspan=3)
+    pf.grid(row=0,column=0,padx=40,pady=120,columnspan=3)
     af = tk.LabelFrame(rw,text='Absent Today',font=('Arial Bold',18),bg='#ffffb3')
-    af.grid(row=0,column=4,padx=40,pady=80,columnspan=3)
+    af.grid(row=0,column=4,padx=40,pady=120,columnspan=3)
     lf = tk.LabelFrame(rw,text='Late Today',font=('Arial Bold',18),bg='#ffffb3')
-    lf.grid(row=0,column=8,padx=40,pady=80,columnspan=3)
+    lf.grid(row=0,column=8,padx=40,pady=120,columnspan=3)
     p,a,l=fr.DailyReport()
     col = ['userid','name']
     col_l= ['userid','name','delay']
     for i in col:
+        tk.Label(pf,text=i.capitalize(),font=('Arial',12),bg='#ffffb3').grid(row=0,column=col.index(i))
+        tk.Label(af,text=i.capitalize(),font=('Arial',12),bg='#ffffb3').grid(row=0,column=col.index(i))
         for j in p.index:
-            tk.Label(pf,text=p[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j,column=col.index(i))
+            tk.Label(pf,text=p[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j+1,column=col.index(i))
         for j in a.index:
-            tk.Label(af,text=a[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j,column=col.index(i))
+            tk.Label(af,text=a[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j+1,column=col.index(i))
     for i in col_l:
+        tk.Label(lf,text=i.capitalize(),font=('Arial',12),bg='#ffffb3').grid(row=0,column=col_l.index(i))
         for j in l.index:
-            tk.Label(lf,text=l[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j,column=col_l.index(i))
+            tk.Label(lf,text=l[i][j],font=('Lucia',14),bg='#ffffb3').grid(row=j+1,column=col_l.index(i))
     tk.Button(rw,text='Import Excel',command=lambda:fr.ImportExcel(p,a,l),font=('Lucia',16),bg='green',fg='white').grid(row=200,column=2)
     tk.Button(rw,text='Close',command=lambda:rw.destroy(),font=('Lucia',16),bg='red',fg='white').grid(row=200,column=8)
     rw.mainloop()
@@ -161,15 +180,15 @@ tk.Button(search_frame,text='Search',bg='#008080',fg='#ffffff',font=('Sans serif
 
 #defining the lists for add_frame
 hours=['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
-minutes=[]
-for i in range(61):
+minutes=hours
+for i in range(24,61):
     minutes.append(str(i))
 seconds=minutes
 #Add_frame
 tk.Label(add_frame,text='ID:',font=('Lucia',16),bg='#b3ccff').grid(row=0,column=0)
 Id=tk.Entry(add_frame,width=10)
 Id.grid(row=0,column=1)
-tk.Label(add_frame,text='Designation:',font=('Lucia',16),bg='#b3ccff').grid(row=0,column=2,pady=10)
+tk.Label(add_frame,text='Department:',font=('Lucia',16),bg='#b3ccff').grid(row=0,column=2,pady=10)
 designation = ttk.Combobox(add_frame,textvariable=department,values=['Design','Development','Finance','Marketing','Sales','Security','Testing'])
 designation.grid(row=0,column=3,pady=10)
 tk.Label(add_frame,text='Name:',font=('Lucia',16),bg='#b3ccff').grid(row=1,column=0)
@@ -184,13 +203,10 @@ email=tk.Entry(add_frame,width=60)
 email.grid(row=3,column=1,columnspan=2,padx=10,pady=10)
 tk.Label(add_frame,text='Arrival Time(HH:MM:SS)',font=('Lucia',16),bg='#b3ccff').grid(row=2,column=3)
 hh=ttk.Combobox(add_frame,textvariable=hh,values=hours,width=3)
-#hh=tk.Entry(add_frame,width=3)
 hh.grid(row=2,column=4,padx=3,pady=20)
 mm=ttk.Combobox(add_frame,textvariable=mm,values=minutes,width=3)
-#mm=tk.Entry(add_frame,width=3)
 mm.grid(row=2,column=5,padx=3)
 ss=ttk.Combobox(add_frame,textvariable=ss,values=seconds,width=3)
-#ss=tk.Entry(add_frame,width=3)
 ss.grid(row=2,column=6,padx=3)
 
 tk.Button(add_frame,text='Clear',bg='#008080',fg='#ffffff',font=('Sans serif',15),command=clear).grid(row=4,column=1)
